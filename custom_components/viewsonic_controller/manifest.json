@@ -1,0 +1,13 @@
+{
+  "domain": "viewsonic_controller",
+  "name": "ViewSonic Controller",
+  "codeowners": ["@nfeuerhelm", "@voidlesity"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://git.voidlesity.dev/ha/viewsonic",
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://git.voidlesity.dev/ha/viewsonic/issues",
+  "requirements": [],
+  "version": "1.0.0"
+}

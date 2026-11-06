@@ -1,0 +1,45 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add a ViewSonic projector or display",
+        "description": "Projectors are controlled on TCP port 4661, commercial displays (model names starting with \"cde\" or \"display-\") on TCP port 5000.",
+        "data": {
+          "host": "Host",
+          "name": "Name",
+          "model": "Model",
+          "reduce traffic": "Reduce network traffic"
+        },
+        "data_description": {
+          "host": "IP address or hostname of the device.",
+          "model": "Use 'unknown' for other projectors and 'display-unknown' for other commercial displays.",
+          "reduce traffic": "Poll every 30 seconds instead of every 5 seconds."
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This device is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "ViewSonic settings",
+        "description": "Changes are applied immediately by reloading the integration.",
+        "data": {
+          "host": "Host",
+          "model": "Model",
+          "reduce traffic": "Reduce network traffic"
+        },
+        "data_description": {
+          "host": "IP address or hostname of the device.",
+          "model": "Use 'unknown' for other projectors and 'display-unknown' for other commercial displays.",
+          "reduce traffic": "Poll every 30 seconds instead of every 5 seconds."
+        }
+      }
+    },
+    "error": {
+      "already_configured": "Another entry already uses this host."
+    }
+  }
+}
