@@ -9,21 +9,23 @@ from .display import ViewSonicDisplayEntity
 
 # key, name, keypad value, icon
 KEYS = [
-    ("key_up", "Up", "000", "mdi:arrow-up-bold"),
-    ("key_down", "Down", "001", "mdi:arrow-down-bold"),
-    ("key_left", "Left", "002", "mdi:arrow-left-bold"),
-    ("key_right", "Right", "003", "mdi:arrow-right-bold"),
+    ("key_up", "up", "000", "mdi:arrow-up-bold"),
+    ("key_down", "down", "001", "mdi:arrow-down-bold"),
+    ("key_left", "left", "002", "mdi:arrow-left-bold"),
+    ("key_right", "right", "003", "mdi:arrow-right-bold"),
     ("key_enter", "OK", "004", "mdi:checkbox-blank-circle"),
-    ("key_input", "Input", "005", "mdi:import"),
-    ("key_menu", "Menu", "006", "mdi:menu"),
-    ("key_exit", "Exit", "007", "mdi:exit-to-app"),
+    ("key_input", "input", "005", "mdi:import"),
+    ("key_menu", "menu", "006", "mdi:menu"),
+    ("key_exit", "exit", "007", "mdi:exit-to-app"),
 ]
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     coordinator = hass.data[DOMAIN][config_entry.entry_id]["coordinator"]
     entities = [DisplayKeyButton(coordinator, *key) for key in KEYS]
-    entities.append(DisplaySyncClockButton(coordinator, "sync_clock", "Sync clock"))
+    entities.append(
+        DisplaySyncClockButton(coordinator, "sync_clock", "System clock sync")
+    )
     async_add_entities(entities)
 
 

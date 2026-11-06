@@ -39,17 +39,14 @@ Entities:
 - The labels configured for each input on the display are available in the `input_labels` attribute of the media player, and whether the current input has a signal in `signal_detected`.
 - The display handles only one control connection reliably, so avoid running other LAN control software against it at the same time.
 
-Entities (all except the media player and the connection sensor are unavailable while the display is off):
+Entities are grouped by the cards on the device page. While the display is off they keep showing their last known values; changing a setting while it is off fails with an error asking to turn it on first.
 
-| Platform        | Entities                                                                  |
-| --------------- | ------------------------------------------------------------------------- |
-| `media_player`  | Power, volume (set/step), mute, source                                    |
-| `number`        | Brightness, Contrast, Color, Tint, Backlight, Bass\*, Treble\*, Balance\* |
-| `switch`        | Backlight, Freeze picture, Power lock, Button lock, Menu lock             |
-| `select`        | Picture size\*, Color mode\*, Menu language\*, Remote control             |
-| `sensor`        | Temperature, Operating hours                                              |
-| `binary_sensor` | Connection, Signal detected                                               |
-| `button`        | Remote keys (Up, Down, Left, Right, OK, Input, Menu, Exit), Sync clock    |
+| Card          | Entities                                                                                                                                                                                                        |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Controls      | Media player (power, volume set/step, mute, source), Backlight, Freeze picture, Remote up/down/left/right/OK/input/menu/exit                                                                                    |
+| Sensors       | Signal detected                                                                                                                                                                                                 |
+| Configuration | **Audio** bass\*, treble\*, balance\* · **Lock** buttons, menu, power · **Picture** backlight, brightness, color, color mode\*, contrast, size\*, tint · **System** clock sync, menu language\*, remote control |
+| Diagnostic    | Connection, Temperature, Operating hours                                                                                                                                                                        |
 
 \* The display accepts these settings but cannot report them back. Home Assistant shows the last value it set (restored across restarts), so changes made with the remote or on-screen menu are not reflected.
 

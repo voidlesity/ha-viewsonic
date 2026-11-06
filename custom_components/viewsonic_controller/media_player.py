@@ -338,7 +338,6 @@ class ViewSonicProjector(MediaPlayerEntity):
 class ViewSonicDisplay(ViewSonicDisplayEntity, MediaPlayerEntity):
     """ViewSonic commercial display (CDE/LFD series) controlled via the LFD LAN protocol."""
 
-    _requires_on = False
     _attr_device_class = MediaPlayerDeviceClass.TV
     _attr_supported_features = (
         MediaPlayerEntityFeature.TURN_ON

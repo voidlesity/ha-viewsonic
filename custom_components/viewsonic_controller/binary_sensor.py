@@ -50,7 +50,6 @@ class ProjectorConnectionSensor(BinarySensorEntity):
 class DisplayConnectionSensor(ViewSonicDisplayEntity, BinarySensorEntity):
     """Whether the display's control port is reachable (it is closed in standby)."""
 
-    _requires_on = False
     _attr_device_class = BinarySensorDeviceClass.CONNECTIVITY
     _attr_entity_category = EntityCategory.DIAGNOSTIC
 
@@ -66,4 +65,6 @@ class DisplaySignalSensor(ViewSonicDisplayEntity, BinarySensorEntity):
 
     @property
     def is_on(self):
+        if not self.coordinator.is_on:
+            return False
         return self.coordinator.data["signal"]

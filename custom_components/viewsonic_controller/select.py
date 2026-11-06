@@ -23,7 +23,7 @@ SELECTS = [
     ),
     (
         "color_mode",
-        "Color mode",
+        "Picture color mode",
         ")",
         {
             "000": "Normal",
@@ -36,7 +36,7 @@ SELECTS = [
     ),
     (
         "remote_control",
-        "Remote control",
+        "System remote control",
         "B",
         {
             "000": "Disabled",
@@ -48,7 +48,7 @@ SELECTS = [
     ),
     (
         "osd_language",
-        "Menu language",
+        "System menu language",
         "2",
         {
             "000": "English",
@@ -80,19 +80,22 @@ class DisplaySelect(ViewSonicDisplayEntity, SelectEntity, RestoreEntity):
         self._attr_icon = icon
         # The display can't report this value, so the last value set is shown
         self._attr_assumed_state = not readable
-        self._assumed_option = None
+        # Shown until the display reports a value
+        self._last_option = None
 
     async def async_added_to_hass(self):
         await super().async_added_to_hass()
-        if not self._readable and (last := await self.async_get_last_state()):
-            if last.state in self._codes:
-                self._assumed_option = last.state
+        last = await self.async_get_last_state()
+        if last and last.state in self._codes:
+            self._last_option = last.state
 
     @property
     def current_option(self):
-        if not self._readable:
-            return self._assumed_option
-        return self._values.get(self.settings.get(self._key))
+        if self._readable:
+            option = self._values.get(self.settings.get(self._key))
+            if option is not None:
+                return option
+        return self._last_option
 
     async def async_select_option(self, option: str):
         value = self._codes[option]
@@ -100,5 +103,5 @@ class DisplaySelect(ViewSonicDisplayEntity, SelectEntity, RestoreEntity):
             await self.coordinator.async_set_setting(self._key, self._command, value)
         else:
             await self.coordinator.async_send(self._command, value)
-            self._assumed_option = option
+            self._last_option = option
             self.async_write_ha_state()

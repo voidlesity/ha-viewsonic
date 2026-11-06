@@ -8,14 +8,21 @@ from .display import ViewSonicDisplayEntity
 
 # key, name, set command, set command type, icon, can be read back from the display
 NUMBERS = [
-    ("brightness", "Brightness", "$", "s", "mdi:brightness-6", True),
-    ("contrast", "Contrast", "#", "s", "mdi:contrast-box", True),
-    ("color", "Color", "&", "s", "mdi:palette", True),
-    ("tint", "Tint", "'", "s", "mdi:format-color-fill", True),
-    ("backlight_level", "Backlight", "B", "A", "mdi:television-ambient-light", True),
-    ("bass", "Bass", ".", "s", "mdi:speaker", False),
-    ("treble", "Treble", "/", "s", "mdi:music-clef-treble", False),
-    ("balance", "Balance", "0", "s", "mdi:scale-balance", False),
+    ("brightness", "Picture brightness", "$", "s", "mdi:brightness-6", True),
+    ("contrast", "Picture contrast", "#", "s", "mdi:contrast-box", True),
+    ("color", "Picture color", "&", "s", "mdi:palette", True),
+    ("tint", "Picture tint", "'", "s", "mdi:format-color-fill", True),
+    (
+        "backlight_level",
+        "Picture backlight",
+        "B",
+        "A",
+        "mdi:television-ambient-light",
+        True,
+    ),
+    ("bass", "Audio bass", ".", "s", "mdi:speaker", False),
+    ("treble", "Audio treble", "/", "s", "mdi:music-clef-treble", False),
+    ("balance", "Audio balance", "0", "s", "mdi:scale-balance", False),
 ]
 
 
@@ -40,19 +47,21 @@ class DisplayNumber(ViewSonicDisplayEntity, RestoreNumber):
         self._attr_icon = icon
         # The display can't report this value, so the last value set is shown
         self._attr_assumed_state = not readable
-        self._assumed_value = None
+        # Shown until the display reports a value
+        self._last_value = None
 
     async def async_added_to_hass(self):
         await super().async_added_to_hass()
-        if not self._readable and (last := await self.async_get_last_number_data()):
-            self._assumed_value = last.native_value
+        if last := await self.async_get_last_number_data():
+            self._last_value = last.native_value
 
     @property
     def native_value(self):
-        if not self._readable:
-            return self._assumed_value
-        value = self.settings.get(self._key)
-        return int(value) if value and value.isdigit() else None
+        if self._readable:
+            value = self.settings.get(self._key)
+            if value and value.isdigit():
+                return int(value)
+        return self._last_value
 
     async def async_set_native_value(self, value: float):
         value = f"{int(value):03d}"
@@ -62,5 +71,5 @@ class DisplayNumber(ViewSonicDisplayEntity, RestoreNumber):
             )
         else:
             await self.coordinator.async_send(self._command, value, self._cmd_type)
-            self._assumed_value = int(value)
+            self._last_value = int(value)
             self.async_write_ha_state()

@@ -214,6 +214,11 @@ class ViewSonicDisplayCoordinator(DataUpdateCoordinator[dict]):
 
     async def async_send(self, command: str, value: str, cmd_type: str = "s"):
         """Send a set command, raising a HomeAssistantError if it fails."""
+        if not self.is_on:
+            # The control port is closed in standby, so fail fast instead of timing out
+            raise HomeAssistantError(
+                f"{self.device_name} is off or still starting up. Turn it on first."
+            )
         try:
             ok = await self.client.set(command, value, cmd_type)
         except LFDError as err:
@@ -262,7 +267,8 @@ class ViewSonicDisplayCoordinator(DataUpdateCoordinator[dict]):
         self._set_power_override(True)
 
     async def async_turn_off(self):
-        await self.async_send("!", "000")
+        if self.is_on:
+            await self.async_send("!", "000")
         self._set_power_override(False)
 
     def _set_power_override(self, on: bool):
@@ -279,8 +285,6 @@ class ViewSonicDisplayEntity(CoordinatorEntity[ViewSonicDisplayCoordinator]):
     """Base class for entities of a ViewSonic display."""
 
     _attr_has_entity_name = True
-    # Only available while the display is on (it can't be controlled in standby)
-    _requires_on = True
 
     def __init__(
         self,
@@ -294,12 +298,6 @@ class ViewSonicDisplayEntity(CoordinatorEntity[ViewSonicDisplayCoordinator]):
         )
         self._attr_name = name
         self._attr_device_info = coordinator.device_info
-
-    @property
-    def available(self) -> bool:
-        if not super().available:
-            return False
-        return self.coordinator.is_on if self._requires_on else True
 
     @property
     def settings(self) -> dict:
